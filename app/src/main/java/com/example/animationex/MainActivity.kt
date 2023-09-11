@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.example.animationex.anim.RotateExpandAnimation
@@ -39,21 +40,30 @@ class MainActivity : AppCompatActivity() {
         //이미지 Y축 회전 후 변경
         binding.ivStar.setOnClickListener { view ->
             isBookmarked = changeImageAnimationByRotateY(
-                view = view,
+                view = view as ImageView,
                 isBookmarked = isBookmarked,
                 bookmarkImgRes = R.drawable.ic_star_fill_24dp,
                 cancelBookmarkImgRes = R.drawable.ic_star_blank_24dp
             )
         }
+
+        binding.ivBookmark.setOnClickListener { view ->
+            isBookmarked = changeImageAnimationByRotateY(
+                view = view as ImageView,
+                isBookmarked = isBookmarked,
+                bookmarkImgRes = R.drawable.ic_bookmark_64px_yellow,
+                cancelBookmarkImgRes = R.drawable.ic_bookmark_64px_gray
+            )
+        }
     }
 
     fun changeImageAnimationByRotateY(
-        view: View,
+        view: ImageView,
         isBookmarked: Boolean,
         bookmarkImgRes: Int,
         cancelBookmarkImgRes: Int
     ): Boolean {
-        var animation =  ObjectAnimator.ofFloat(view, "rotationY", 0.0f, 90f)
+        val animation =  ObjectAnimator.ofFloat(view, "rotationY", 0.0f, 90f)
 
         animation.duration = 200
         animation.addListener(object : AnimatorListenerAdapter() {
@@ -62,9 +72,9 @@ class MainActivity : AppCompatActivity() {
 
                 //현재 북마크 상태와 반대되는 이미지를 세팅한다.
                 val imageRes = if (isBookmarked) cancelBookmarkImgRes else bookmarkImgRes
-                view.setBackgroundResource(imageRes)
+                view.setImageResource(imageRes)
 
-                var animation = ObjectAnimator.ofFloat(view, "rotationY", 90f, 180f)
+                val animation = ObjectAnimator.ofFloat(view, "rotationY", 90f, 180f)
 
                 animation.duration = 200
                 animation.start()
