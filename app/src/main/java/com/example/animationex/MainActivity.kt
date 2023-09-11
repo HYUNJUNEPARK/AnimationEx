@@ -15,8 +15,7 @@ import com.example.animationex.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
-    private var isTest = true
-    private var isTest2 = true
+    private var isBookmarked = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,70 +36,47 @@ class MainActivity : AppCompatActivity() {
         val anim = AnimationUtils.loadAnimation(this, R.anim.blink_animation)
         binding.ivAndroid.startAnimation(anim)
 
-
-        //
-        binding.ivAir.setOnClickListener { view ->
-            var animation =  ObjectAnimator.ofFloat(view, "rotationY", 0.0f, 90f)
-
-            animation.duration = 200
-            animation.addListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    super.onAnimationEnd(animation)
-
-                    val imageRes = if (isTest) R.drawable.ic_android_red_24dp else R.drawable.ic_android_black_24dp
-                    view.setBackgroundResource(imageRes)
-                    isTest = !isTest
-
-                    var animation = ObjectAnimator.ofFloat(view, "rotationY", 90f, 180f)
-
-                    animation.duration = 200
-                    animation.start()
-
-                }
-            })
-            animation.start()
-
-
-//            //https://copycoding.tistory.com/114
-//            val rotate = RotateAnimation(
-//                0f,
-//                180f,
-//                Animation.RELATIVE_TO_SELF,
-//                0.5f,
-//                Animation.RELATIVE_TO_SELF,
-//                0.5f
-//            )
-//            rotate.duration = 200
-//            rotate.interpolator = LinearInterpolator()
-//
-//            binding.ivAir.startAnimation(rotate)
+        //이미지 Y축 회전 후 변경
+        binding.ivStar.setOnClickListener { view ->
+            isBookmarked = changeImageAnimationByRotateY(
+                view = view,
+                isBookmarked = isBookmarked,
+                bookmarkImgRes = R.drawable.ic_star_fill_24dp,
+                cancelBookmarkImgRes = R.drawable.ic_star_blank_24dp
+            )
         }
-
-
-//        binding.ivAndroid.setOnClickListener {
-//            val animation = if (isRotate) {
-//                ObjectAnimator.ofFloat(it, "rotationY", 0.0f, 180f)
-//            } else {
-//                ObjectAnimator.ofFloat(it, "rotationY", 180f, 0.0f)
-//            }
-//            isRotate = !isRotate
-//
-//
-//            animation.duration = 200
-//            animation.repeatCount = 1
-//            animation.interpolator = AccelerateDecelerateInterpolator()
-//            animation.start()
-//        }
-//
-
-
-//        binding.ivAndroid.setOnClickListener {
-//            it.animate().rotationX(180f)
-//        }
     }
+
+    fun changeImageAnimationByRotateY(
+        view: View,
+        isBookmarked: Boolean,
+        bookmarkImgRes: Int,
+        cancelBookmarkImgRes: Int
+    ): Boolean {
+        var animation =  ObjectAnimator.ofFloat(view, "rotationY", 0.0f, 90f)
+
+        animation.duration = 200
+        animation.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                super.onAnimationEnd(animation)
+
+                //현재 북마크 상태와 반대되는 이미지를 세팅한다.
+                val imageRes = if (isBookmarked) cancelBookmarkImgRes else bookmarkImgRes
+                view.setBackgroundResource(imageRes)
+
+                var animation = ObjectAnimator.ofFloat(view, "rotationY", 90f, 180f)
+
+                animation.duration = 200
+                animation.start()
+            }
+        })
+        animation.start()
+
+        return !isBookmarked
+    }
+
 
     companion object {
         const val TAG = "testLog"
     }
-
 }
